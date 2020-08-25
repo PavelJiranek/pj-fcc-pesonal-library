@@ -34,6 +34,13 @@ module.exports = function (app) {
         .get(function (req, res) {
             //response will be array of book objects
             //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+            db.collection(BOOKS_COLLECTION)
+                .find({})
+                .project({ comments: 0 })
+                .sort({ title: 1 })
+                .limit(10000)
+                .toArray()
+                .then(books => res.send(books));
         })
 
         .post(function (req, res) {
@@ -41,17 +48,29 @@ module.exports = function (app) {
             const title = req.body.title;
             if (title) {
                 db.collection(BOOKS_COLLECTION)
-                    .insertOne({ title })
+                    .insertOne({ title, comments: [], commentcount: 0 })
                     .then(r => res.send(getBookFromDbResponse(r)));
             } else {
                 res.status(400)
                 res.send('Missing book title')
             }
         })
-    
-    .delete(function(req, res){
-      //if successful response will be 'complete delete successful'
-    });
+
+        .delete(function (req, res) {
+            //if successful response will be 'complete delete successful'
+            db.collection(BOOKS_COLLECTION).deleteMany({}).then(r => {
+                    if (r.deletedCount > 0) {
+                        res.send('complete delete successful')
+                    } else {
+                        res.send('no books deleted')
+                    }
+                },
+                () => {
+                    res.status(400);
+                    res.send('Failed to delete books')
+                },
+            )
+        });
 
 
 
