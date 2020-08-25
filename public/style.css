@@ -1,7 +1,27 @@
-.border {
-  border-style: inset;
-  border-width: 1px;
-  margin: 10px;
+:root {
+  --primary: #911a1a;
+  --secondary: #157676;
+  --tertiary: #c82475;
+  --background: #1D1D1D;
+}
+
+body {
+  padding: 10px;
+  background-color: var(--background);
+  color: #BFBFBF;
+}
+
+h1, h2 {
+  color: var(--primary);
+}
+
+a {
+  color: var(--secondary);
+}
+
+code {
+  color: var(--tertiary);
+  background-color: #363636;
 }
 
 #sampleui {
@@ -18,8 +38,48 @@
 
 #userstories {
   margin-left: 5%;
+  margin-top: 5%
+}
+
+#userstories ol {
+  padding: 1rem 2rem;
+}
+
+#userstories li {
+  margin: 1rem 0;
+}
+
+input {
+  margin: 0.5rem 0;
+}
+
+input[type="text"], textarea {
+  border-radius: 4px;
+  border-color: var(--primary);
+  padding: 0.4rem;
+}
+
+input[type="text"]:focus, textarea {
+  border-color: var(--secondary);
+  outline: none;
+}
+
+[type="submit"], button {
+  color: white;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+[type="submit"]:hover, button:hover {
+  background-color: var(--secondary);
+  transition: background-color 200ms ease-in-out;
 }
 
 form {
   padding: 5px;
 }
+
+
