@@ -8,24 +8,46 @@
 
 'use strict';
 
-var expect = require('chai').expect;
-var MongoClient = require('mongodb').MongoClient;
-var ObjectId = require('mongodb').ObjectId;
-const MONGODB_CONNECTION_STRING = process.env.DB;
-//Example connection: MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {});
+const mongodb = require('mongodb');
+const mongo = mongodb.MongoClient;
+const ObjectId = mongodb.ObjectID;
+const utils = require('./utils');
+const {
+    getBookFromDbResponse,
+} = utils;
+
+const BOOKS_COLLECTION = "library.books";
 
 module.exports = function (app) {
+    let db;
+    mongo.connect(process.env.MONGO_URI, (err, client) => {
+            if (err) {
+                console.log("Database error: " + err);
+            } else {
+                console.log("Successful database connection");
+                db = client.db(process.env.MONGO_DB);
+            }
+        },
+    );
 
-  app.route('/api/books')
-    .get(function (req, res){
-      //response will be array of book objects
-      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-    })
-    
-    .post(function (req, res){
-      var title = req.body.title;
-      //response will contain new book object including atleast _id and title
-    })
+    app.route('/api/books')
+        .get(function (req, res) {
+            //response will be array of book objects
+            //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+        })
+
+        .post(function (req, res) {
+            //response will contain new book object including at least _id and title
+            const title = req.body.title;
+            if (title) {
+                db.collection(BOOKS_COLLECTION)
+                    .insertOne({ title })
+                    .then(r => res.send(getBookFromDbResponse(r)));
+            } else {
+                res.status(400)
+                res.send('Missing book title')
+            }
+        })
     
     .delete(function(req, res){
       //if successful response will be 'complete delete successful'
