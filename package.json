@@ -1,33 +1,38 @@
 {
-	"name": "fcc-library",
+	"name": "pj-fcc-personal-librarz",
 	"version": "0.0.1",
-	"description": "boilerplate",
+	"description": "A freeCodeCamp project",
+	"author": "Pavel Jiranek",
 	"main": "server.js",
 	"scripts": {
-		"start": "node server.js"
+		"yarn-install": "yarn install",
+		"start": "cross-env PORT=4000 node server.js",
+		"test": "cross-env NODE_ENV=test PORT=6000 node server.js"
 	},
 	"dependencies": {
 		"express": "^4.14.0",
 		"cors": "^2.8.1",
 		"body-parser": "^1.15.2",
+		"cross-env": "^7.0.2",
+		"dotenv": "^8.2.0",
 		"chai": "^3.5.0",
 		"mongodb": "^2.2.16",
 		"chai-http": "^3.0.0",
 		"mocha": "^3.2.0",
+		"ramda": "^0.27.0",
 		"zombie": "^5.0.5",
 		"helmet": "^3.1.0"
 	},
-	"engines": {
-		"node": "4.4.3"
-	},
 	"repository": {
 		"type": "git",
-		"url": "https://hyperdev.com/#!/project/welcome-project"
+		"url": "https://github.com/PavelJiranek/pj-fcc-pesonal-library"
 	},
 	"keywords": [
 		"node",
 		"hyperdev",
-		"express"
+		"express",
+		"personal",
+		"library"
 	],
 	"license": "MIT"
 }
