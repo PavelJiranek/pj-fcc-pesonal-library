@@ -74,26 +74,47 @@ module.exports = function (app) {
 
     const NO_BOOK_FOUND_MESSAGE = 'no book exists';
 
+    const getBookById = (bookId, response) => {
+        try {
+            db.collection(BOOKS_COLLECTION)
+                .findOne({ _id: ObjectId(bookId) }, { commentcount: 0 })
+                .then(
+                    book => response.send(book || NO_BOOK_FOUND_MESSAGE),
+                    () => response.send(NO_BOOK_FOUND_MESSAGE),
+                )
+        } catch {
+            response.send(NO_BOOK_FOUND_MESSAGE)
+        }
+    }
+
     app.route('/api/books/:id')
         .get(function (req, res) {
             const bookid = req.params.id;
             //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-            try {
-                db.collection(BOOKS_COLLECTION)
-                    .findOne({ _id: ObjectId(bookid) }, { commentcount: 0 })
-                    .then(
-                        book => res.send(book || NO_BOOK_FOUND_MESSAGE),
-                        () => res.send(NO_BOOK_FOUND_MESSAGE),
-                    )
-            } catch {
-                res.send(NO_BOOK_FOUND_MESSAGE)
-            }
+            getBookById(bookid, res)
         })
 
         .post(function (req, res) {
             const bookid = req.params.id;
             const comment = req.body.comment;
             //json res format same as .get
+            try {
+                db.collection(BOOKS_COLLECTION)
+                    .updateOne({ _id: ObjectId(bookid) },
+                        { $inc: { commentcount: 1 }, $push: { comments: comment } },
+                    )
+                    .then(({ modifiedCount }) => {
+                            if (modifiedCount > 0) {
+                                getBookById(bookid, res);
+                            } else {
+                                res.send(NO_BOOK_FOUND_MESSAGE)
+                            }
+                        },
+                        () => res.send(NO_BOOK_FOUND_MESSAGE),
+                    )
+            } catch {
+                res.send(NO_BOOK_FOUND_MESSAGE)
+            }
         })
 
         .delete(function (req, res) {
