@@ -2,8 +2,8 @@
 *
 *
 *       Complete the API routing below
-*       
-*       
+*
+*
 */
 
 'use strict';
@@ -72,23 +72,33 @@ module.exports = function (app) {
             )
         });
 
+    const NO_BOOK_FOUND_MESSAGE = 'no book exists';
 
+    app.route('/api/books/:id')
+        .get(function (req, res) {
+            const bookid = req.params.id;
+            //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+            try {
+                db.collection(BOOKS_COLLECTION)
+                    .findOne({ _id: ObjectId(bookid) }, { commentcount: 0 })
+                    .then(
+                        book => res.send(book || NO_BOOK_FOUND_MESSAGE),
+                        () => res.send(NO_BOOK_FOUND_MESSAGE),
+                    )
+            } catch {
+                res.send(NO_BOOK_FOUND_MESSAGE)
+            }
+        })
 
-  app.route('/api/books/:id')
-    .get(function (req, res){
-      var bookid = req.params.id;
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
-    })
-    
-    .post(function(req, res){
-      var bookid = req.params.id;
-      var comment = req.body.comment;
-      //json res format same as .get
-    })
-    
-    .delete(function(req, res){
-      var bookid = req.params.id;
-      //if successful response will be 'delete successful'
-    });
-  
+        .post(function (req, res) {
+            const bookid = req.params.id;
+            const comment = req.body.comment;
+            //json res format same as .get
+        })
+
+        .delete(function (req, res) {
+            const bookid = req.params.id;
+            //if successful response will be 'delete successful'
+        });
+
 };
