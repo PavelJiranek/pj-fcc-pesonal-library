@@ -120,6 +120,21 @@ module.exports = function (app) {
         .delete(function (req, res) {
             const bookid = req.params.id;
             //if successful response will be 'delete successful'
+            try {
+                db.collection(BOOKS_COLLECTION)
+                    .deleteOne({ _id: ObjectId(bookid) })
+                    .then(({ deletedCount }) => {
+                            if (deletedCount === 1) {
+                                res.send('delete successful')
+                            } else {
+                                res.send(NO_BOOK_FOUND_MESSAGE)
+                            }
+                        },
+                        () => res.send(NO_BOOK_FOUND_MESSAGE),
+                    )
+            } catch {
+                res.send(NO_BOOK_FOUND_MESSAGE)
+            }
         });
 
 };
